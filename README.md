@@ -120,39 +120,95 @@ Gender is balanced 50% male and 50% female across all three subsets.
 
 ---
 
-## 6. Installation & Setup
+## ⚡ Quick Setup on a New Laptop / Machine
+
+Follow these step-by-step instructions to set up and run EmotiSound on any new computer:
 
 ### Prerequisites
-- Python 3.10+ (tested on Python 3.13)
-- Node.js 18+ and npm (tested on Node v22.17)
-- Windows, macOS, or Linux
+- **Python**: Version 3.10+ (tested up to 3.13)
+- **Node.js**: Version 18+ and npm (tested on Node v20/v22)
+- **Git**: Installed and configured
 
-### 1. Python Environment Setup
+> [!NOTE]
+> **No Re-training Required**: The pre-trained PyTorch model (`ml/artifacts/checkpoints/best_model.pt`), evaluation metrics, and audio sample presets (`Audio_Speech_Actors_01-24/Actor_01/`) are already bundled in the repo. Inference, presets, and visualization work right out of the box!
+
+---
+
+### Step 1: Clone the Repository
 ```powershell
-# Create and activate virtual environment (optional but recommended)
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
+git clone https://github.com/amansheikh3110/EmotiSound.git
+cd EmotiSound
+```
 
-# Install backend and machine learning dependencies
+### Step 2: Set Up Python Backend Environment
+Open a terminal in the project root:
+
+**On Windows (PowerShell):**
+```powershell
+# Create virtual environment
+python -m venv .venv
+
+# If script execution is restricted on Windows, run once:
+# Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+
+# Activate virtual environment
+.\.venv\Scripts\activate
+
+# Install all backend and deep learning dependencies
 pip install -r requirements.txt
 ```
 
-### 2. Verify System Environment
+**On macOS / Linux:**
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+### Step 3: Install Frontend Dependencies
+```powershell
+cd frontend
+npm install
+cd ..
+```
+
+---
+
+### Step 4: Run the Application
+
+Open **two terminal windows**:
+
+**Terminal 1 — Backend Flask REST API:**
+```powershell
+# Ensure .venv is activated
+python backend/app.py
+```
+*API server will start on `http://127.0.0.1:5000`.*
+
+**Terminal 2 — React Engineering Console:**
+```powershell
+cd frontend
+npm run dev
+```
+*Vite dev server will start on `http://127.0.0.1:5173`.*
+
+Open your browser to:
+👉 **`http://localhost:5173`**
+
+Click any canonical emotion preset (`[01: NEU]` through `[08: SUR]`) or upload your own `.wav` file to run real-time inference, log-Mel spectrogram rendering, and chrono-acoustic trajectory analysis.
+
+---
+
+## 6. Development Tools & Diagnostics
+
+### Verify Environment & Hardware Acceleration
 ```powershell
 python scripts/check_environment.py
 ```
 
-### 3. Verify Audio & Pipeline Integrity
+### Verify Audio Pipeline Integrity
 ```powershell
 python scripts/verify_installation.py
-```
-
-### 4. Frontend Dependency Installation
-```powershell
-cd frontend
-npm install
-npm run build
-cd ..
 ```
 
 ---
