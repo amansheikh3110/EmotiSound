@@ -1,0 +1,50 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Node / Frontend
+node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/.vite/
+*.local
+
+# Datasets & Large Audio Data
+Audio_Song_Actors_01-24/
+Audio_Speech_Actors_01-24/*
+!Audio_Speech_Actors_01-24/Actor_01/
+ml/data/raw/*
+!ml/data/raw/README.md
+ml/data/processed/*
+!ml/data/processed/README.md
+*.zip
+*.tar.gz
+
+# Checkpoints & Artifacts (Keep best_model.pt so trained model clones to new machine)
+ml/artifacts/checkpoints/*.pt
+!ml/artifacts/checkpoints/best_model.pt
+ml/artifacts/checkpoints/*.pth
+
+# Temporary uploads and SQLite Database
+instance/
+*.sqlite
+*.sqlite3
+*.db
+backend/uploads/*
+!backend/uploads/.gitkeep
+temp/
+
+# Logs
+*.log
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+desktop.ini

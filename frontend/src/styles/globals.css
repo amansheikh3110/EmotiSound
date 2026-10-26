@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #ece8e1;
+    color: #18181a;
+    font-family: 'JetBrains Mono', 'Inter', monospace;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Custom Creamy Industrial Scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #ece8e1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d4cfc0;
+  border-radius: 1px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #bebaa8;
+}
+
+/* Classic Button Focus Rings */
+button:focus-visible, a:focus-visible, input:focus-visible {
+  outline: 2px solid #18181a;
+  outline-offset: 1px;
+}

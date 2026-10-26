@@ -1,0 +1,1836 @@
+# MASTER PROJECT IMPLEMENTATION PROMPT — EMOTISOUND
+## Speech Emotion Recognition & Audio Intelligence Platform Using Deep Learning
+
+Act as a senior machine learning engineer, deep learning researcher, full-stack developer, UI/UX designer, and software architect. Build a complete, working, professional-grade academic Deep Learning project called **EmotiSound — Speech Emotion Recognition & Audio Intelligence Platform**.
+
+Do not merely generate a plan, tutorial, mockup, or isolated code snippets. Implement the complete project in the current workspace, including the frontend, backend, data-processing pipeline, actual deep learning model, model training scripts, evaluation system, visualizations, tests, and documentation.
+
+The finished project must be suitable for a university Deep Learning course, live demonstration, technical viva, GitHub portfolio, and future extension into a research-oriented application.
+
+The project must remain achievable on an ordinary laptop. Prioritize correctness, reproducibility, clean architecture, good visual design, and a reliable end-to-end workflow over unnecessary complexity.
+
+If the workspace already contains code, inspect it before making changes. Preserve useful existing functionality, identify missing components, and integrate the implementation cleanly. Do not overwrite unrelated files or fabricate successful results.
+
+---
+
+# 1. PROJECT VISION AND OBJECTIVES
+
+EmotiSound is a browser-based speech emotion recognition platform that analyzes a voice recording and predicts which emotion category best matches its acoustic patterns.
+
+A user should be able to upload a recording, listen to it, inspect its waveform and spectrogram, run a trained deep learning model, view predicted emotion probabilities, explore acoustic characteristics, and review the analysis history.
+
+The platform should explain the model's output in a technically meaningful but accessible way.
+
+For example, a user uploads a recording of someone saying a sentence. The application processes the audio, extracts a log-Mel spectrogram, passes it through a trained convolutional neural network, and returns a prediction such as "Happy" or "Sad", together with the probability distribution across all supported classes.
+
+The output represents the model's learned classification of vocal patterns. It must never claim to establish a person's actual internal emotional state.
+
+## Primary objectives
+
+1. Implement a genuine deep learning model using PyTorch.
+2. Use a recognized speech emotion dataset, preferably RAVDESS.
+3. Build a reproducible preprocessing, training, validation, and testing pipeline.
+4. Evaluate the model using appropriate classification metrics.
+5. Provide a fully functional web application with a polished, professional interface.
+6. Visualize the audio signal and its time-frequency characteristics.
+7. Integrate the trained model with the backend for real inference.
+8. Include a model evaluation and training-results section.
+9. Make the project easy to install, run, demonstrate, and explain.
+10. Keep the system modular so individual components can be improved later.
+
+The application must not be a collection of static screens. Every major feature must be connected to working functionality.
+
+# 2. REQUIRED TECHNOLOGY STACK
+
+Use the following stack unless a genuine compatibility issue requires a documented alternative.
+
+## Machine learning and audio processing
+
+- Python 3.11 or another compatible version supported by the installed environment.
+- PyTorch for neural network implementation and training.
+- torchaudio where compatible with the installed PyTorch version.
+- librosa for audio loading, resampling, feature extraction, and Mel spectrogram processing.
+- NumPy for numerical operations.
+- scikit-learn for evaluation metrics, confusion matrices, classification reports, and data utilities.
+- Matplotlib for generating evaluation plots when needed.
+- SoundFile for audio loading and validation when appropriate.
+
+## Backend
+
+- Flask for the REST API.
+- Flask-CORS configured for the specific frontend development origin.
+- Pydantic or equivalent explicit validation for incoming configuration and metadata where useful.
+- SQLite for lightweight local analysis history and application metadata.
+- Pytest for backend and model-pipeline tests.
+
+## Frontend
+
+- React with Vite.
+- TypeScript.
+- Tailwind CSS for styling.
+- Recharts for probability and evaluation charts.
+- Lucide React for consistent icons.
+- A suitable waveform visualization library, or a custom Canvas-based waveform component.
+- A lightweight animation library only if it adds real value without compromising performance.
+
+Use a proper dependency manifest and lockfile where supported. Verify package compatibility instead of blindly installing the latest version of every dependency.
+
+Do not introduce a cloud database, paid API, authentication provider, external inference service, or complicated infrastructure unless genuinely required. This project must run locally without paid services.
+
+# 3. PROJECT ARCHITECTURE
+
+Organize the application into three clearly separated layers.
+
+## Layer A: Deep learning engine
+
+Responsible for:
+
+- Dataset ingestion.
+- Audio validation.
+- Preprocessing.
+- Feature extraction.
+- Data augmentation.
+- Dataset splitting.
+- Model definition.
+- Training.
+- Validation.
+- Evaluation.
+- Model checkpointing.
+- Inference.
+- Confidence calibration or calibration analysis where feasible.
+
+## Layer B: Flask backend
+
+Responsible for:
+
+- Receiving and validating audio uploads.
+- Applying the exact preprocessing used during training.
+- Loading the trained model safely and efficiently.
+- Running inference.
+- Returning predictions and acoustic visualizations.
+- Exposing model evaluation information.
+- Providing application health and readiness status.
+- Saving and retrieving local analysis history.
+- Handling errors and malformed requests.
+
+## Layer C: React frontend
+
+Responsible for:
+
+- Application navigation.
+- Audio upload and recording playback.
+- Audio waveform visualization.
+- Spectrogram visualization.
+- Inference controls.
+- Emotion probability charts.
+- Prediction results.
+- Model evaluation dashboards.
+- Analysis history.
+- Loading, empty, error, and unavailable-model states.
+- Responsive layout and accessible interactions.
+
+The frontend must never directly load a PyTorch model or independently reimplement the classification pipeline. The backend owns inference and preprocessing.
+
+# 4. RECOMMENDED PROJECT DIRECTORY STRUCTURE
+
+Create a clean structure similar to the following. Modify it where necessary, but maintain the same separation of responsibilities.
+
+emotisound/
+  README.md
+  .gitignore
+  .env.example
+  requirements.txt
+  pyproject.toml
+  docker-compose.yml                 # Optional, only if genuinely useful
+
+  backend/
+    app.py
+    config.py
+    extensions.py
+
+    api/
+      health.py
+      inference.py
+      history.py
+      evaluation.py
+
+    services/
+      audio_service.py
+      prediction_service.py
+      history_service.py
+      model_service.py
+
+    schemas/
+      requests.py
+      responses.py
+
+    database/
+      models.py
+      repository.py
+
+    utils/
+      errors.py
+      file_validation.py
+      logging_config.py
+
+    tests/
+      test_health.py
+      test_audio_validation.py
+      test_inference.py
+      test_history.py
+
+  ml/
+    config.py
+
+    data/
+      README.md
+      raw/
+      processed/
+
+    preprocessing/
+      audio_loader.py
+      feature_extractor.py
+      augmentation.py
+      dataset.py
+      split_dataset.py
+
+    models/
+      cnn.py
+      model_factory.py
+
+    training/
+      train.py
+      trainer.py
+      losses.py
+      callbacks.py
+      checkpointing.py
+
+    evaluation/
+      evaluate.py
+      metrics.py
+      plots.py
+      reports.py
+
+    inference/
+      predictor.py
+
+    artifacts/
+      checkpoints/
+      evaluation/
+      reports/
+
+    tests/
+      test_preprocessing.py
+      test_model_shapes.py
+      test_data_splits.py
+
+  frontend/
+    package.json
+    vite.config.ts
+    tsconfig.json
+    index.html
+
+    src/
+      main.tsx
+      App.tsx
+
+      api/
+        client.ts
+        inference.ts
+        history.ts
+        evaluation.ts
+
+      components/
+        layout/
+          AppShell.tsx
+          Sidebar.tsx
+          Topbar.tsx
+          PageHeader.tsx
+
+        audio/
+          AudioUploader.tsx
+          AudioPlayer.tsx
+          Waveform.tsx
+          Spectrogram.tsx
+          AudioMetadata.tsx
+
+        emotion/
+          EmotionBadge.tsx
+          EmotionProbabilityChart.tsx
+          EmotionDistribution.tsx
+          PredictionSummary.tsx
+
+        dashboard/
+          MetricCard.tsx
+          RecentAnalyses.tsx
+          EvaluationSummary.tsx
+
+        common/
+          Button.tsx
+          Card.tsx
+          Modal.tsx
+          Tooltip.tsx
+          LoadingState.tsx
+          ErrorState.tsx
+          EmptyState.tsx
+
+      pages/
+        Overview.tsx
+        AnalyzeAudio.tsx
+        AnalysisResults.tsx
+        ModelInsights.tsx
+        History.tsx
+        About.tsx
+
+      hooks/
+        useAudioAnalysis.ts
+        useAnalysisHistory.ts
+
+      types/
+        api.ts
+        audio.ts
+        analysis.ts
+
+      utils/
+        formatting.ts
+        validation.ts
+
+      styles/
+        globals.css
+
+  scripts/
+    download_or_prepare_data.py
+    check_environment.py
+    train_model.py
+    evaluate_model.py
+    verify_installation.py
+    run_development.py
+
+  instance/
+    .gitkeep
+
+Do not create empty placeholder files merely to match this tree. Every implemented file must serve a purpose.
+
+Keep downloaded datasets, generated checkpoints, temporary uploads, logs, and database files out of version control.
+
+# 5. DATASET AND EMOTION LABELS
+
+Use the Ryerson Audio-Visual Database of Emotional Speech and Song (RAVDESS), preferably the speech-only audio portion for the first implementation.
+
+Use the eight standard emotion categories represented in the selected speech dataset:
+
+1. Neutral
+2. Calm
+3. Happy
+4. Sad
+5. Angry
+6. Fearful
+7. Disgust
+8. Surprised
+
+The model must use one consistent mapping between numeric class IDs and these labels across training, evaluation, inference, API responses, and frontend rendering.
+
+Centralize the mapping in a shared configuration or model metadata file. Never independently hardcode inconsistent class orders in different modules.
+
+## Dataset acquisition
+
+Implement a dataset preparation workflow that supports a locally supplied RAVDESS dataset.
+
+The application must explain where the dataset belongs, which archive or directory structure is expected, and how to verify that the files have been recognized.
+
+Do not assume that the dataset is already present. Do not fabricate a download URL or pretend that a download succeeded.
+
+If a verified public dataset source can be used, provide its documented URL in the dataset instructions. Otherwise, clearly explain that the user must obtain the dataset from its official distribution and place it in the expected directory.
+
+Support the normal RAVDESS audio filenames and validate the filename metadata against the expected dataset structure.
+
+For the speech-only subset, inspect the filename fields needed to identify the emotion and actor. Validate the expected modality, vocal channel, emotional intensity, statement, repetition, and actor fields where relevant.
+
+Implement a dataset inspection command that reports:
+
+- Total audio files discovered.
+- Number of valid files.
+- Number of rejected files and reasons.
+- Number of examples per emotion.
+- Number of unique actors.
+- Audio duration statistics.
+- Sample rate distribution.
+- Whether every required class is represented.
+- Whether enough independent actors are available for splitting.
+
+If the dataset is missing, the application should still start in an honest untrained state. The README must provide exact steps to prepare the dataset and train the model.
+
+Do not silently substitute randomly generated predictions or synthetic labels for real training data.
+
+# 6. AUDIO PREPROCESSING PIPELINE
+
+Implement a reusable, thoroughly tested preprocessing pipeline.
+
+Training, evaluation, and inference must use the same fundamental audio-processing rules.
+
+## Step 1: File validation
+
+Support reasonable audio formats such as WAV, FLAC, and MP3 when the installed decoder supports them.
+
+Validate:
+
+- File extension and decoded format.
+- Maximum upload size.
+- Successful audio decoding.
+- Nonzero duration.
+- Reasonable duration limits.
+- Finite numerical samples.
+- Nonempty audio content.
+- Absence of invalid or corrupt sample arrays.
+
+Set an explicit maximum upload size, for example 20 MB, and a reasonable duration limit, such as 15 seconds for this project. Make these limits configurable.
+
+Do not trust MIME type or file extension alone.
+
+Reject malformed files gracefully and explain the problem in understandable language.
+
+Never execute uploaded files, interpret their contents as code, or use the original filename as a filesystem path.
+
+## Step 2: Audio normalization
+
+Convert the decoded waveform to mono using a documented channel-combination method.
+
+Resample to 16,000 Hz.
+
+Normalize the signal only in a controlled, documented manner. Avoid aggressive normalization that could remove meaningful intensity information.
+
+Apply an appropriate policy for silent or nearly silent inputs. Do not amplify pure silence into an apparently valid signal.
+
+Keep preprocessing deterministic during validation and testing.
+
+## Step 3: Fixed-duration handling
+
+Use a fixed target duration of four seconds for the initial model.
+
+For shorter recordings, pad the waveform with zeros.
+
+For longer recordings, use a documented truncation policy or configurable analysis window. Avoid selecting a random segment during inference.
+
+Record the original duration and whether padding or truncation was applied.
+
+Because fixed-duration processing may remove part of a long utterance, disclose this limitation in the results page.
+
+## Step 4: Log-Mel spectrogram extraction
+
+Extract log-Mel spectrogram features using librosa or an equivalent consistent implementation.
+
+Use a documented initial configuration:
+
+- Sample rate: 16,000 Hz.
+- FFT size: 1,024.
+- Hop length: 256 samples.
+- Mel frequency bins: 128.
+- Frequency range: approximately 0–8,000 Hz.
+- Input duration: four seconds.
+- Logarithmic magnitude representation with a small numerical epsilon.
+
+Normalize features using statistics estimated from the training set only, or use a clearly defined per-example normalization method if justified.
+
+Do not compute dataset-wide normalization statistics using the test set.
+
+Ensure that the resulting tensor has a consistent shape across every example. For a four-second waveform, 128 Mel bins and a 256-sample hop will produce approximately 251 time frames, depending on the chosen centering and padding conventions.
+
+Document the exact tensor shape and ensure the CNN accepts it.
+
+## Step 5: Feature visualization
+
+Generate an understandable Mel spectrogram for the selected audio.
+
+The spectrogram should display time on the horizontal axis, frequency on the vertical axis, and signal energy through color intensity.
+
+Use consistent axis labels and a color scale.
+
+Do not confuse the visualized spectrogram with the model's output probabilities. They are separate representations of the audio and its predicted class distribution.
+
+Where feasible, display the waveform and spectrogram from the same processed audio buffer to avoid mismatches.
+
+# 7. DATA AUGMENTATION
+
+Implement controlled data augmentation for training only.
+
+Include a small set of configurable techniques:
+
+- Low-level additive noise.
+- Small time shifts.
+- Mild gain variation.
+- Frequency masking.
+- Time masking.
+
+Use waveform-level augmentation and spectrogram-level augmentation only where appropriate.
+
+Do not apply every transformation blindly. Configure conservative strengths so that the label remains meaningful.
+
+Validation and test samples must not receive random augmentation.
+
+Keep the original recordings unchanged.
+
+Provide a configuration switch to enable or disable augmentation and document its purpose.
+
+# 8. DATA SPLITTING AND LEAKAGE PREVENTION
+
+This section is critical.
+
+Split the dataset by speaker identity, using the actor IDs encoded in the RAVDESS filenames.
+
+Do not randomly split individual recordings in a way that places recordings from the same speaker into both training and testing sets.
+
+Create separate training, validation, and testing groups with no overlapping actors.
+
+Use a documented fixed random seed for reproducibility.
+
+Aim for an approximate split such as 70% of actors for training, 15% for validation, and 15% for testing, adjusting the actor assignment where necessary to maintain reasonable class coverage.
+
+The exact proportions may vary because actors, not individual recordings, are the independent splitting units.
+
+If class coverage cannot be maintained with a proposed split, report the limitation and choose a valid split rather than silently introducing speaker leakage.
+
+Add a test that asserts that the actor ID sets for training, validation, and testing are pairwise disjoint.
+
+Save the resulting split manifest and its configuration for reproducibility.
+
+Do not tune the model repeatedly against the test set.
+
+# 9. DEEP LEARNING MODEL ARCHITECTURE
+
+Implement a custom convolutional neural network using PyTorch.
+
+The model must be small enough to train on a CPU or a modest laptop GPU.
+
+Use the log-Mel spectrogram as the model input.
+
+Suggested architecture:
+
+Input tensor:
+- Batch size × 1 × 128 × approximately 251.
+
+Convolutional block 1:
+- 2D convolution, 32 output channels.
+- 3 × 3 kernel.
+- Appropriate padding.
+- Batch normalization.
+- ReLU.
+- 2D max pooling.
+- Optional dropout.
+
+Convolutional block 2:
+- 2D convolution, 64 output channels.
+- Batch normalization.
+- ReLU.
+- 2D max pooling.
+- Dropout.
+
+Convolutional block 3:
+- 2D convolution, 128 output channels.
+- Batch normalization.
+- ReLU.
+- 2D max pooling.
+- Dropout.
+
+Convolutional block 4:
+- 2D convolution, 192 or 256 output channels, depending on resource constraints.
+- Batch normalization.
+- ReLU.
+- Adaptive average pooling.
+
+Classification head:
+- Flatten or reshape pooled features.
+- Fully connected layer.
+- ReLU.
+- Dropout.
+- Final fully connected layer with eight output logits.
+
+Do not apply softmax inside the model when training with cross-entropy loss. Apply softmax during inference when probabilities are required.
+
+Adjust dimensions carefully and verify the forward pass with dummy tensors.
+
+Use a model factory so the architecture can be created consistently by the training and inference modules.
+
+## Training configuration
+
+Start with:
+
+- Loss: cross-entropy.
+- Optimizer: Adam or AdamW.
+- Initial learning rate: approximately 0.001, configurable.
+- Batch size: 16 or 32, depending on memory.
+- Maximum epochs: approximately 30–40.
+- Early stopping based on validation loss.
+- Learning-rate reduction when validation performance plateaus.
+- Weight decay where appropriate.
+- Gradient clipping if needed.
+- Fixed seeds where practical.
+
+These are starting defaults, not guaranteed optimal settings. Tune based on actual validation results.
+
+Handle class imbalance using class-weighted loss or another justified method if the dataset distribution requires it.
+
+Track training loss, validation loss, training accuracy, validation accuracy, learning rate, epoch duration, and the best checkpoint.
+
+Save the best model according to a clearly defined validation criterion, such as validation loss.
+
+Do not save only the final epoch if an earlier checkpoint performs better.
+
+## Checkpoint format
+
+Save:
+
+- Model state dictionary.
+- Architecture identifier.
+- Class-to-index mapping.
+- Sample rate.
+- Target duration.
+- FFT size.
+- Hop length.
+- Number of Mel bins.
+- Feature normalization configuration.
+- Training configuration.
+- Best epoch.
+- Dataset split metadata.
+- Relevant software version metadata.
+
+Load model checkpoints safely, using a state-dictionary-based approach and appropriate safe-loading options supported by the installed PyTorch version.
+
+Do not load arbitrary user-provided pickle files.
+
+# 10. TRAINING PIPELINE AND COMMAND-LINE WORKFLOW
+
+Implement a reliable training workflow that can be executed independently of the web application.
+
+The user should be able to inspect the dataset, train the model, evaluate the model, and launch the web application using documented commands.
+
+Provide commands similar to:
+
+1. Environment verification:
+   `python scripts/check_environment.py`
+
+2. Dataset inspection:
+   `python scripts/download_or_prepare_data.py --inspect`
+
+3. Training:
+   `python scripts/train_model.py`
+
+4. Evaluation:
+   `python scripts/evaluate_model.py`
+
+5. Start backend:
+   `python backend/app.py`
+
+6. Start frontend:
+   `cd frontend && npm run dev`
+
+Adjust the scripts if necessary, but ensure every documented command actually works.
+
+Implement:
+
+- Dataset loading.
+- Reproducible splitting.
+- Training and validation loops.
+- Checkpointing.
+- Early stopping.
+- Training logs.
+- Training-history export.
+- Evaluation report generation.
+- Useful progress messages.
+- Clear error messages when dependencies or data are missing.
+
+The training process must not depend on opening the frontend.
+
+The application must not automatically start a long training job every time the Flask server launches.
+
+Provide optional command-line arguments for epochs, batch size, learning rate, dataset directory, output directory, and random seed.
+
+Support CPU execution by default, with automatic CUDA selection when available and a safe fallback to CPU.
+
+Do not assume that CUDA is installed or functional simply because an NVIDIA GPU exists.
+
+# 11. MODEL EVALUATION AND EXPERIMENTAL ANALYSIS
+
+Build a proper evaluation module using the held-out speaker-independent test set.
+
+Calculate:
+
+- Overall accuracy.
+- Macro precision.
+- Macro recall.
+- Macro F1-score.
+- Weighted F1-score.
+- Per-class precision, recall, and F1-score.
+- Confusion matrix.
+- Training and validation loss curves.
+- Training and validation accuracy curves.
+- One-vs-rest ROC-AUC when the class structure and available samples support meaningful calculation.
+- Per-class support counts.
+
+Handle undefined metrics gracefully and avoid presenting invalid metrics as meaningful values.
+
+Export machine-readable evaluation results to JSON and human-readable reports to CSV or Markdown as appropriate.
+
+Generate a confusion matrix visualization with readable class labels.
+
+Generate loss and accuracy charts from actual recorded training history.
+
+Do not fabricate metrics or generate artificial charts that imply training has occurred.
+
+If a trained model or evaluation report is unavailable, show an explicit unavailable state in the application.
+
+## Baseline comparison
+
+Implement an optional experiment comparing the CNN against a simple baseline, such as a classifier trained on conventional audio features.
+
+The baseline may use MFCC summary statistics with a scikit-learn classifier.
+
+Clearly separate the conventional machine learning baseline from the deep learning model.
+
+Display their test metrics side by side, using the same speaker-independent test partition.
+
+This comparison is a useful academic extension, but it must not prevent the core CNN project from being completed.
+
+# 12. INFERENCE ENGINE
+
+Implement a reusable inference service.
+
+The service must:
+
+1. Verify that a trained checkpoint exists.
+2. Load the model once when the backend starts, when feasible.
+3. Set the model to evaluation mode.
+4. Validate the incoming audio.
+5. Apply the exact preprocessing configuration stored with the checkpoint.
+6. Extract the model input features.
+7. Run inference using `torch.inference_mode()` or an equivalent safe inference context.
+8. Convert logits to a probability distribution.
+9. Return the top prediction and the probabilities for all eight classes.
+10. Record useful metadata about the input and inference.
+11. Return an informative error if the model cannot be loaded.
+
+The top prediction must be the class with the highest returned probability.
+
+All probabilities must be finite, lie between zero and one, and sum to approximately one.
+
+Do not randomly select an emotion or return hardcoded probabilities.
+
+## Prediction interpretation
+
+The response should include:
+
+- Predicted emotion.
+- Probability for each emotion class.
+- Model identifier and version.
+- Original audio duration.
+- Processed audio duration.
+- Sample rate.
+- Whether padding or truncation was applied.
+- Inference duration.
+- A note that the result is a model prediction rather than a definitive psychological assessment.
+
+Use the term "model confidence" carefully. Softmax outputs are not automatically calibrated probabilities of real-world correctness.
+
+Include a configurable warning for uncertain or out-of-distribution inputs. Do not present a threshold as scientifically validated unless it has been evaluated.
+
+# 13. FLASK REST API
+
+Implement versioned, documented endpoints under `/api/v1`.
+
+## Health and readiness
+
+`GET /api/v1/health`
+
+Return application status, version, and whether the backend is operational.
+
+`GET /api/v1/ready`
+
+Return whether the model is actually loaded and ready for inference, along with a concise reason if it is unavailable.
+
+The application can be healthy even when the model has not yet been trained. Readiness for inference is a separate status.
+
+## Audio analysis
+
+`POST /api/v1/analyze`
+
+Accept an audio file using multipart form data.
+
+Validate the upload and return the prediction, probability distribution, audio metadata, and inference timing.
+
+Do not return a fake success response when the model is unavailable.
+
+Use appropriate HTTP status codes for invalid uploads, unsupported formats, unavailable models, and unexpected server errors.
+
+## Model information
+
+`GET /api/v1/model`
+
+Return:
+
+- Model availability.
+- Model name and architecture.
+- Model version.
+- Supported labels.
+- Preprocessing configuration.
+- Last successful training metadata, if available.
+- Dataset metadata, if available.
+- A clear indication when any information is unknown.
+
+## Evaluation information
+
+`GET /api/v1/evaluation`
+
+Return evaluation metrics and artifact references from the latest genuine evaluation report.
+
+If no report exists, return an explicit unavailable state.
+
+## Analysis history
+
+`GET /api/v1/history`
+
+Return paginated recent analyses, newest first.
+
+`GET /api/v1/history/<analysis_id>`
+
+Return the details of one stored analysis.
+
+`DELETE /api/v1/history/<analysis_id>`
+
+Delete an individual history record where supported.
+
+Persist metadata and predictions in SQLite. Avoid storing original audio indefinitely by default.
+
+## API design standards
+
+- Use a consistent JSON response format.
+- Validate all inputs.
+- Keep stack traces and internal filesystem paths out of user-facing errors.
+- Log unexpected exceptions without logging full audio contents or sensitive data.
+- Configure CORS only for the intended local frontend origin.
+- Add request size limits.
+- Avoid unnecessary global state.
+- Keep database access and inference logic separate from route handlers.
+- Document every endpoint and its expected response.
+
+# 14. FRONTEND PRODUCT DESIGN
+
+Create a high-quality, dark, modern, editorial-style SaaS dashboard.
+
+The interface should look like a carefully designed audio research product, not a generic admin template or a basic college project.
+
+Use a consistent design system with reusable components.
+
+## Visual direction
+
+Product name: EmotiSound.
+
+Design characteristics:
+
+- Deep charcoal and midnight backgrounds.
+- Dark navy surfaces.
+- Soft off-white primary text.
+- Muted gray secondary text.
+- A restrained violet-to-cyan accent gradient.
+- Subtle borders.
+- Carefully controlled shadows.
+- Rounded panels, generally between 12 and 18 pixels.
+- Clean typography.
+- Large, readable numerical metrics.
+- Consistent spacing.
+- Subtle motion.
+- High-contrast interactive states.
+
+Suggested starting palette:
+
+- Main background: `#0B0D12`
+- Sidebar background: `#0E1118`
+- Card background: `#131722`
+- Raised surface: `#191F2D`
+- Primary text: `#F3F5FA`
+- Secondary text: `#969FB1`
+- Border: `#262D3B`
+- Violet accent: `#8B7CFF`
+- Cyan accent: `#52D6E8`
+
+Use these as starting values and refine the palette consistently.
+
+Use a modern sans-serif typeface such as Inter or a similar readable font. Load external fonts only when available and appropriate; always provide a system fallback.
+
+Avoid excessive gradients, glowing elements, decorative blobs, oversized headings, unnecessary animations, and emoji-based navigation.
+
+Use Lucide icons consistently.
+
+The interface should feel technical, elegant, calm, and trustworthy.
+
+# 15. APPLICATION SHELL AND NAVIGATION
+
+Build a persistent application shell with a left sidebar, a top navigation bar, and a main content region.
+
+## Sidebar
+
+Include:
+
+- EmotiSound brand mark and wordmark.
+- Overview.
+- Analyze Audio.
+- Model Insights.
+- Analysis History.
+- About Project.
+- A compact model-status indicator near the bottom.
+
+Use a simple waveform or audio-frequency-inspired icon as the brand mark.
+
+Highlight the active route clearly.
+
+The sidebar should be collapsible on desktop and transform into an appropriate mobile navigation drawer on smaller screens.
+
+Do not create navigation links that lead to nonexistent pages.
+
+## Topbar
+
+Include:
+
+- Current page title or breadcrumb.
+- A short contextual subtitle where useful.
+- Backend/model availability indicator.
+- A compact settings or information control only if it has real functionality.
+
+Do not add a nonfunctional notification bell, account avatar menu, or profile settings just to fill space.
+
+## Main content area
+
+Use consistent page margins, a readable maximum content width, appropriate responsive columns, and predictable vertical spacing.
+
+Keep the primary action visually obvious.
+
+Ensure all pages use the same layout system and reusable card components.
+
+# 16. PAGE ONE — OVERVIEW DASHBOARD
+
+Build an attractive landing dashboard that communicates the application's purpose immediately.
+
+## Header
+
+Display:
+
+"Speech Emotion Intelligence"
+
+Supporting text:
+
+"Explore vocal patterns through deep learning, acoustic visualization, and interpretable classification results."
+
+Include a prominent "Analyze Audio" action that navigates to the analysis page.
+
+## Primary metrics
+
+Display four metric cards:
+
+1. Model Status.
+2. Supported Emotion Classes.
+3. Test Accuracy.
+4. Total Analyses.
+
+Each card must use real application state.
+
+Rules:
+
+- Supported Emotion Classes can display eight because the label set is configured.
+- Model Status must come from backend readiness.
+- Test Accuracy must come from the saved evaluation report.
+- Total Analyses must come from actual stored history.
+
+If no model is trained, show "Not trained" or "Unavailable" rather than inventing an accuracy.
+
+If there are no previous analyses, show zero and provide a useful empty state.
+
+## Main dashboard composition
+
+Use a balanced two-column layout.
+
+The larger panel should contain a compact recent-analysis section or an introduction to the analysis workflow.
+
+The smaller panel should display the eight supported emotion categories as a clean, readable grid or compact list.
+
+Include:
+
+- Emotion label.
+- Consistent icon or simple visual marker.
+- One-line neutral description.
+- Clear indication that these are supported classification labels.
+
+Do not assign scientifically unsupported personality traits or psychological meanings to the labels.
+
+## Recent analyses
+
+Display the latest few real analyses, including:
+
+- Emotion prediction.
+- Timestamp.
+- Audio duration.
+- Top model probability.
+- A link to open the full result.
+
+If there is no history, display a well-designed empty state with a direct action to analyze the first recording.
+
+## Dataset or model information
+
+Include a small, restrained information section showing the current model's architecture and whether a trained checkpoint is available.
+
+All displayed information must come from backend metadata or configuration.
+
+# 17. PAGE TWO — ANALYZE AUDIO
+
+This is the most important page in the application.
+
+The upload and analysis workflow must be intuitive, visually polished, and fully functional.
+
+## Page heading
+
+Title: "Analyze Audio"
+
+Subtitle: "Upload a voice recording to explore its acoustic features and predicted vocal emotion category."
+
+Include a brief note that the model classifies vocal patterns and does not establish a person's true emotional state.
+
+## Upload panel
+
+Build a large drag-and-drop upload area with:
+
+- A waveform or audio-file icon.
+- Heading: "Drop an audio file here".
+- Supporting text explaining accepted formats.
+- A browse-files button.
+- Maximum file size.
+- Maximum recording duration.
+- A note about local processing and data retention.
+
+Accept only formats supported by the backend.
+
+Support drag-and-drop and ordinary file selection.
+
+Implement frontend validation for user experience, but always validate again on the server.
+
+When an invalid file is selected, display a specific and actionable error.
+
+## Selected audio state
+
+After selection, replace the empty upload panel with a selected-file card.
+
+Show:
+
+- Original filename, safely rendered as text.
+- File size.
+- Audio duration, once determined.
+- Format.
+- An audio player.
+- Remove or replace file action.
+- A waveform visualization.
+
+The audio player should support play, pause, seek, and current-time display.
+
+If a waveform library is used, configure it carefully and ensure the waveform is based on the selected audio.
+
+If the waveform cannot be generated, display an understandable fallback rather than breaking the page.
+
+## Audio waveform
+
+Render a responsive waveform using the actual selected audio.
+
+Use a muted base waveform and an accent-colored played region if appropriate.
+
+The waveform should resize with its container.
+
+Support seeking by clicking or dragging, subject to the chosen implementation.
+
+Do not create a decorative waveform unrelated to the recording.
+
+## Analysis controls
+
+Provide a clear primary button labeled "Analyze Recording".
+
+The button must be disabled when:
+
+- No file is selected.
+- The selected file is invalid.
+- A request is already running.
+- The model is not ready.
+
+If the model is unavailable, explain that the dataset must be prepared and the model trained before genuine predictions can be made.
+
+Provide a link to the model setup instructions.
+
+## Loading state
+
+While analysis is running:
+
+- Disable duplicate submissions.
+- Display a visible progress or loading indicator.
+- Show concise status text such as "Processing audio", "Extracting acoustic features", or "Running model inference".
+- Keep the interface stable.
+- Prevent repeated submissions.
+- Handle slow requests without silently losing state.
+
+Do not fabricate precise stage progress if the backend does not expose it. Use an indeterminate progress indicator when appropriate.
+
+## Successful analysis
+
+When the API returns a genuine prediction, navigate to the results view or reveal a well-designed result section.
+
+Retain the selected file where practical so the user can inspect it again.
+
+## Error states
+
+Handle:
+
+- Invalid format.
+- Oversized file.
+- Empty or silent audio.
+- Corrupt audio.
+- Network error.
+- Backend unavailable.
+- Model not trained.
+- Inference failure.
+- Unsupported codec.
+- Request timeout.
+
+Use concise, human-readable error messages and a retry action when appropriate.
+
+Never display raw Python exceptions or stack traces in the UI.
+
+# 18. PAGE THREE — ANALYSIS RESULTS
+
+Build a dedicated results page for an individual audio analysis.
+
+The page must present the result clearly without implying more certainty than the model supports.
+
+## Prediction summary
+
+At the top, display:
+
+- Predicted emotion.
+- Highest model probability.
+- Audio duration.
+- Inference time.
+- Model version.
+
+Use an accent-colored emotion marker, but avoid oversized animated gauges or misleading certainty indicators.
+
+Display a concise explanation such as:
+
+"The model assigned the highest score to Happy among the supported categories."
+
+Do not write that the speaker is definitely happy.
+
+## Emotion probability distribution
+
+Display all eight classes in a horizontal bar chart or similarly readable visualization.
+
+Each row should include:
+
+- Emotion label.
+- Probability.
+- A proportionally scaled bar.
+- A consistent class order or clearly documented sorting order.
+
+Allow sorting by highest probability or original class order if useful.
+
+Ensure the chart uses the actual backend response.
+
+The sum of all displayed probabilities should be approximately 100%, allowing for rounding.
+
+Use appropriate labels and tooltips.
+
+## Confidence interpretation
+
+Include a short explanatory section:
+
+"These values represent the model's normalized output scores. They should not be interpreted as guaranteed probabilities that a person is experiencing a particular emotion."
+
+If confidence calibration has not been evaluated, say so.
+
+Do not create arbitrary labels such as "clinically certain" or "emotionally verified".
+
+## Audio details
+
+Display:
+
+- Audio filename.
+- Original duration.
+- Sample rate.
+- Number of channels where known.
+- Processed duration.
+- Whether padding or truncation occurred.
+
+Keep this information visually secondary to the primary result.
+
+## Audio waveform and playback
+
+Allow the user to replay the uploaded recording.
+
+Display the waveform using actual audio data.
+
+Where practical, retain a temporary local browser copy of the selected file for playback instead of permanently uploading and storing the audio.
+
+If a result is opened later from history without the original audio, display metadata and predictions without pretending the original recording remains available.
+
+## Mel spectrogram
+
+Display a genuine log-Mel spectrogram generated by the backend or a correctly implemented frontend visualization.
+
+The spectrogram must correspond to the audio that was actually analyzed.
+
+Include:
+
+- Time axis.
+- Frequency axis.
+- Color scale.
+- A short explanation of what the representation shows.
+
+Do not use a random image or generic spectrogram as a substitute.
+
+## Analysis actions
+
+Include working actions for:
+
+- Analyze another recording.
+- View all emotion probabilities.
+- Save or revisit the analysis if supported by the history system.
+- Return to dashboard.
+- Download an analysis report.
+
+## Downloadable report
+
+Generate a JSON or readable text report containing:
+
+- Analysis ID.
+- Timestamp.
+- Model metadata.
+- Predicted class.
+- Probability distribution.
+- Audio metadata.
+- Inference duration.
+- Relevant caveats.
+
+Do not include the audio itself in the report by default.
+
+Do not include fabricated metrics or claim that the result is clinically valid.
+
+# 19. PAGE FOUR — MODEL INSIGHTS
+
+This page should demonstrate that the project is genuinely based on deep learning and has been evaluated scientifically.
+
+The page must use saved evaluation artifacts rather than fabricated sample values.
+
+## Model overview
+
+Show:
+
+- Model architecture.
+- Number of supported classes.
+- Input representation.
+- Sampling rate.
+- Mel feature configuration.
+- Training status.
+- Best epoch.
+- Training date, if known.
+- Dataset size and split information, if known.
+
+Do not show an unverified parameter count or training date.
+
+## Training curves
+
+Render training and validation loss over epochs.
+
+Render training and validation accuracy over epochs.
+
+Include legends, labeled axes, and tooltips.
+
+Use actual training-history data.
+
+If the history file is missing, display an unavailable state.
+
+## Confusion matrix
+
+Display the eight emotion classes on both axes.
+
+Use a readable heatmap with cell values.
+
+Provide a toggle or clearly labeled option for raw counts versus row-normalized percentages.
+
+Explain that off-diagonal values indicate where the model confused one class with another.
+
+## Classification report
+
+Display per-class precision, recall, F1-score, and support.
+
+Include macro and weighted averages.
+
+Use a clean table with readable column labels.
+
+## Baseline comparison
+
+If the baseline experiment has been completed, compare its test metrics against the CNN using the same held-out speaker-independent test set.
+
+Otherwise, show that the experiment has not yet been run.
+
+Do not invent results.
+
+## Limitations and interpretation
+
+Include a dedicated section explaining:
+
+- The dataset contains acted emotional speech.
+- The dataset may not represent spontaneous conversation.
+- Speaker-independent evaluation is necessary to test generalization to unseen actors.
+- Recording quality and background noise can affect predictions.
+- Similar emotion categories may be confused.
+- A softmax score is not automatically a calibrated probability.
+- The model does not determine a person's actual internal state.
+
+This section should be written in professional, understandable language.
+
+# 20. PAGE FIVE — ANALYSIS HISTORY
+
+Implement a functional history page connected to SQLite.
+
+## History table or card layout
+
+Display the actual saved records.
+
+Each record should contain:
+
+- Timestamp.
+- Analysis identifier.
+- Predicted category.
+- Highest model probability.
+- Duration.
+- Model version.
+- A view-details action.
+
+Use pagination or sensible limits rather than retrieving an unlimited number of records.
+
+Provide a search or filter control if it can be implemented reliably.
+
+Useful filters include emotion category and date range.
+
+## History details
+
+Opening a record should display its stored prediction and metadata.
+
+If the original audio is not retained, clearly state that only the analysis record is available.
+
+Do not imply that the original recording can be replayed when it has been deleted.
+
+## Deletion
+
+Provide a working deletion action with confirmation.
+
+Delete the requested history record from SQLite.
+
+Ensure the frontend updates after deletion.
+
+If audio storage is introduced later, ensure deletion covers the associated file as well.
+
+## Privacy
+
+By default, retain analysis metadata rather than original recordings.
+
+Do not store raw audio in the database.
+
+Avoid saving sensitive file contents, unnecessary personal data, or audio-derived identity information.
+
+Document the history and deletion policy.
+
+# 21. PAGE SIX — ABOUT PROJECT
+
+Create a professional academic project page.
+
+Include:
+
+- Project title.
+- Problem statement.
+- Objectives.
+- System architecture.
+- Dataset information.
+- Deep learning methodology.
+- CNN architecture overview.
+- Audio preprocessing pipeline.
+- Training and evaluation methodology.
+- Technology stack.
+- Limitations.
+- Future scope.
+
+Provide a simple visual architecture diagram using an appropriate web visualization or SVG:
+
+Audio Input → Validation → Preprocessing → Log-Mel Spectrogram → CNN → Probability Distribution → Results Dashboard.
+
+Include the backend and evaluation pipeline as separate branches where appropriate.
+
+Explain the four major functional modules:
+
+1. Audio preprocessing and feature extraction.
+2. CNN-based emotion classification.
+3. Model evaluation and acoustic visualization.
+4. Interactive analysis and reporting dashboard.
+
+Do not claim that the project has achieved research-grade accuracy or production validation without evidence.
+
+# 22. FRONTEND FUNCTIONALITY AND DESIGN QUALITY
+
+Every visible control must have a defined, working behavior.
+
+Implement:
+
+- Routing between pages.
+- Responsive layouts.
+- Drag-and-drop upload.
+- File selection.
+- Audio playback.
+- Waveform display.
+- Spectrogram display.
+- Genuine inference requests.
+- Probability charts.
+- Evaluation charts.
+- History retrieval.
+- History deletion.
+- Report download.
+- Retry controls.
+- Loading states.
+- Empty states.
+- Error states.
+- Backend/model status.
+- Accessible form controls.
+
+Use React state and reusable hooks instead of unnecessary prop drilling or duplicated logic.
+
+Keep API requests in dedicated client modules.
+
+Define TypeScript types for every important API request and response.
+
+Avoid `any` wherever practical.
+
+Use environment configuration for the API base URL. Include an `.env.example` and do not commit secrets.
+
+## Responsive design
+
+The application must work at:
+
+- 1440 px desktop.
+- 1280 px laptop.
+- 1024 px tablet landscape.
+- 768 px tablet portrait.
+- 390 px mobile.
+- 360 px narrow mobile.
+
+At smaller widths:
+
+- Collapse the sidebar.
+- Stack multi-column layouts.
+- Keep buttons usable.
+- Prevent chart overflow.
+- Make tables scroll or transform into cards.
+- Preserve audio player controls.
+- Keep headings readable.
+- Avoid horizontal page scrolling.
+
+## Accessibility
+
+Use semantic HTML.
+
+Provide labels for form controls.
+
+Ensure keyboard navigation works.
+
+Provide visible focus states.
+
+Use adequate text contrast.
+
+Do not rely on color alone to convey emotion labels or errors.
+
+Add appropriate accessible names to icon-only buttons.
+
+Respect reduced-motion preferences.
+
+## Performance
+
+Avoid unnecessary component rerenders.
+
+Avoid sending the same audio file repeatedly without user action.
+
+Limit chart data to what is required.
+
+Revoke temporary browser object URLs when no longer needed.
+
+Do not embed large audio files as base64 strings in analysis history.
+
+# 23. SECURITY, PRIVACY, AND RELIABILITY
+
+Implement practical safeguards.
+
+- Validate uploads on both frontend and backend.
+- Set upload size and duration limits.
+- Use safe temporary-file handling.
+- Use generated temporary filenames rather than trusting user-supplied paths.
+- Remove temporary files after processing.
+- Avoid unsafe deserialization of arbitrary checkpoints.
+- Keep secrets out of source code.
+- Restrict CORS to the intended development origin.
+- Handle exceptions consistently.
+- Avoid exposing internal filesystem paths.
+- Keep logs useful but privacy-conscious.
+- Use parameterized database operations or an appropriate ORM.
+- Do not store audio by default.
+- Ensure deletion actions update persistent state.
+- Use a reasonable inference timeout.
+- Avoid executing shell commands derived from user input.
+- Do not allow uploads to overwrite application files or checkpoints.
+
+Provide a `.gitignore` that excludes:
+
+- Virtual environments.
+- Node modules.
+- Dataset archives.
+- Raw and processed datasets.
+- Model checkpoints.
+- Temporary audio files.
+- SQLite database files.
+- Logs.
+- Cache directories.
+- Local environment files.
+- Build artifacts.
+
+# 24. ERROR HANDLING AND MODEL AVAILABILITY
+
+The application must support three distinct operational states.
+
+## State A: Model not trained
+
+The backend starts successfully, the frontend loads, and the user can navigate the application.
+
+The analysis page explains that the model is not yet available.
+
+The model-insights page displays missing training artifacts appropriately.
+
+The interface must not return fake predictions.
+
+## State B: Model trained but evaluation incomplete
+
+Real inference is available if the checkpoint and metadata are valid.
+
+The application must clearly distinguish model availability from the availability of test metrics.
+
+Do not display test accuracy until a valid evaluation report exists.
+
+## State C: Model trained and evaluated
+
+All supported features become available:
+
+- Real audio inference.
+- Probability distributions.
+- Audio metadata.
+- Spectrogram visualization.
+- Training curves.
+- Confusion matrix.
+- Classification report.
+- Analysis history.
+- Report download.
+
+If a checkpoint is corrupt or incompatible, show a useful error and keep the rest of the application operational where possible.
+
+# 25. TESTING REQUIREMENTS
+
+Write real automated tests.
+
+## Preprocessing tests
+
+Test:
+
+- Mono conversion.
+- Resampling.
+- Duration padding.
+- Duration truncation.
+- Feature shape consistency.
+- Finite spectrogram values.
+- Silent input rejection.
+- Invalid audio rejection.
+- Unsupported file rejection.
+
+## Model tests
+
+Test:
+
+- Model initialization.
+- Forward-pass tensor shapes.
+- Eight output logits.
+- Finite output values.
+- Correct device handling.
+- Checkpoint save and reload.
+- Inference probability validity.
+
+## Data-splitting tests
+
+Test that:
+
+- Train, validation, and test sets are nonempty.
+- No actor overlaps between splits.
+- The class mapping is consistent.
+- The split is reproducible with a fixed seed.
+
+## Backend tests
+
+Test:
+
+- Health endpoint.
+- Readiness endpoint.
+- Model-not-trained response.
+- Invalid upload handling.
+- Successful inference when a valid test checkpoint is available.
+- History retrieval.
+- History deletion.
+- Evaluation report availability.
+
+Use a small temporary model fixture for unit tests where possible. Tests must not require the entire RAVDESS dataset or a full model training run.
+
+## Frontend checks
+
+Run the production build and resolve TypeScript errors.
+
+Test the key interaction flows:
+
+1. Navigate to Analyze Audio.
+2. Select an audio file.
+3. Display audio metadata.
+4. Handle an invalid upload.
+5. Handle a backend-unavailable state.
+6. Display genuine analysis results when available.
+7. Navigate to the result from history.
+8. Delete a history record.
+9. Display unavailable evaluation artifacts correctly.
+
+Use an appropriate frontend test framework if practical. Do not make the project depend on a complex test infrastructure unnecessarily.
+
+# 26. DOCUMENTATION AND REPRODUCIBILITY
+
+Write a comprehensive README.
+
+Include:
+
+1. Project overview.
+2. Problem statement.
+3. Features.
+4. System architecture.
+5. Technology stack.
+6. Dataset source and preparation instructions.
+7. Dataset directory structure.
+8. Environment setup.
+9. Backend installation.
+10. Frontend installation.
+11. Model training.
+12. Model evaluation.
+13. Starting the application.
+14. API documentation.
+15. Troubleshooting.
+16. Testing instructions.
+17. Privacy considerations.
+18. Limitations.
+19. Future enhancements.
+20. Example screenshots or a clearly identified screenshot checklist.
+
+Provide exact Windows PowerShell commands where practical because the project may be developed on Windows.
+
+Explain how to create and activate a virtual environment, install dependencies, prepare the dataset, train the model, evaluate it, and start both servers.
+
+Document the expected locations of the generated model checkpoint and evaluation report.
+
+Explain that the first training run requires the dataset and may take time.
+
+Include a troubleshooting section for:
+
+- Dataset path errors.
+- Missing dependencies.
+- Audio decoding failures.
+- PyTorch device problems.
+- Frontend/backend connection failures.
+- Missing model checkpoints.
+- Port conflicts.
+- Unsupported audio formats.
+
+Do not claim that a command has been tested if it has not been run.
+
+# 27. OPTIONAL EXTENSIONS — ONLY AFTER THE CORE PROJECT WORKS
+
+Do not allow optional features to delay the required project.
+
+Once the core application works, consider:
+
+- A conventional ML baseline using MFCC features.
+- Controlled robustness testing with background noise.
+- Probability calibration analysis.
+- An optional browser microphone recording feature.
+- A small experiment comparing Mel spectrogram configurations.
+- An exportable academic experiment report.
+- An optional lightweight model variant for faster CPU inference.
+
+Do not add real-time continuous microphone monitoring, speaker identification, emotion-based personality profiling, cloud deployment, or complex user accounts unless explicitly requested later.
+
+The first version should focus on reliable analysis of uploaded audio recordings.
+
+# 28. IMPLEMENTATION ORDER
+
+Follow this sequence to avoid building a visually complete but nonfunctional application.
+
+Phase 1 — Inspect the environment and existing workspace.
+
+- Identify the operating system.
+- Check Python and Node versions.
+- Inspect existing files.
+- Verify available resources.
+- Identify dependency compatibility issues.
+- Create the project structure.
+
+Phase 2 — Build the machine learning foundation.
+
+- Implement dataset inspection.
+- Implement filename parsing and label extraction.
+- Implement actor-independent splitting.
+- Implement preprocessing.
+- Implement log-Mel feature extraction.
+- Implement the CNN.
+- Add unit tests.
+
+Phase 3 — Implement training and evaluation.
+
+- Build the training loop.
+- Add checkpointing.
+- Add early stopping.
+- Export training history.
+- Implement evaluation metrics.
+- Generate genuine evaluation artifacts.
+
+Phase 4 — Build the backend.
+
+- Implement model loading.
+- Implement inference.
+- Implement API validation.
+- Implement health and readiness endpoints.
+- Implement history persistence.
+- Implement evaluation endpoints.
+- Test backend behavior.
+
+Phase 5 — Build the frontend design system.
+
+- Create the application shell.
+- Create reusable components.
+- Establish typography, colors, spacing, and responsive rules.
+- Implement the dashboard.
+- Implement the analysis page.
+
+Phase 6 — Connect the application.
+
+- Connect audio uploads to the backend.
+- Display the genuine model response.
+- Add waveform and spectrogram visualizations.
+- Implement analysis results.
+- Connect history and evaluation pages.
+
+Phase 7 — Verify and polish.
+
+- Run automated tests.
+- Run the frontend production build.
+- Test the API.
+- Resolve integration errors.
+- Verify all loading and empty states.
+- Check responsive layouts.
+- Verify that missing models never produce fake results.
+
+Phase 8 — Document the finished project.
+
+- Finalize the README.
+- Add setup commands.
+- Document model training.
+- Document limitations.
+- Provide a clear run and test checklist.
+
+# 29. ACCEPTANCE CRITERIA
+
+The project is complete only when the following conditions are satisfied.
+
+## Machine learning
+
+- [ ] A real PyTorch CNN is implemented.
+- [ ] The model accepts log-Mel spectrogram inputs.
+- [ ] The dataset loader supports the selected RAVDESS speech files.
+- [ ] The emotion label mapping is consistent.
+- [ ] The train/validation/test split is actor-independent.
+- [ ] Training and evaluation can be executed from the command line.
+- [ ] A checkpoint can be saved and reloaded.
+- [ ] Evaluation metrics are generated from actual held-out data.
+- [ ] The inference pipeline uses the same preprocessing configuration as training.
+
+## Backend
+
+- [ ] Flask starts without requiring a trained model.
+- [ ] Health and readiness endpoints work.
+- [ ] Audio uploads are validated.
+- [ ] Real inference works when a valid checkpoint is available.
+- [ ] Missing or invalid checkpoints produce clear errors.
+- [ ] History is persisted and retrieved correctly.
+- [ ] Evaluation results are exposed when available.
+- [ ] Temporary uploads are cleaned up.
+
+## Frontend
+
+- [ ] The application has a consistent, professional design.
+- [ ] Navigation works.
+- [ ] The dashboard uses real backend information.
+- [ ] Audio uploads and playback work.
+- [ ] The waveform represents the actual selected audio.
+- [ ] The spectrogram represents the analyzed audio.
+- [ ] The analysis button calls the real backend.
+- [ ] Results display all eight class probabilities.
+- [ ] Model-insights charts use genuine evaluation artifacts.
+- [ ] History records can be opened and deleted.
+- [ ] Reports can be downloaded.
+- [ ] Responsive layouts work on desktop and mobile.
+- [ ] Empty, loading, unavailable, and error states are implemented.
+
+## Documentation and delivery
+
+- [ ] The README contains reproducible setup instructions.
+- [ ] Dependencies are documented.
+- [ ] Dataset preparation instructions are included.
+- [ ] Training and evaluation commands are documented.
+- [ ] The project can be launched locally.
+- [ ] Automated tests are included and the available test suite has been run.
+- [ ] No fabricated training results or predictions are present.
+- [ ] No paid API or cloud service is required for the core workflow.
+
+# 30. FINAL EXECUTION INSTRUCTIONS
+
+Start by inspecting the current workspace and determining what is already implemented.
+
+Then build the project in the implementation order described above.
+
+Do not stop after producing an architecture proposal. Write the actual source files, install compatible dependencies where possible, run the relevant commands, fix errors, and verify the integration.
+
+Do not create a frontend that merely looks functional while its buttons are disconnected.
+
+Do not use random predictions, fabricated accuracy values, dummy evaluation charts, or simulated training results.
+
+If the dataset is unavailable, finish the dataset preparation instructions, the complete training pipeline, the backend, and the frontend, and clearly mark model-dependent functionality as unavailable until genuine training artifacts are produced.
+
+If a particular package, dataset download, GPU feature, or external dependency cannot be accessed, explain the limitation and provide a practical alternative rather than silently skipping the requirement.
+
+Keep the application maintainable, use clear naming, add comments where they explain non-obvious decisions, and avoid unnecessary abstraction.
+
+After implementation, provide a concise delivery summary stating:
+
+1. What was implemented.
+2. Which files contain the main model, training pipeline, backend, and frontend.
+3. Which dependencies were installed.
+4. Which tests and build commands were actually executed.
+5. Whether a real model has been trained and evaluated.
+6. Whether any required dataset or model artifacts are still missing.
+7. The exact commands to launch the application.
+8. Any remaining issues that prevent full end-to-end operation.
+
+The final deliverable must be a real, runnable, academically defensible deep learning application with a professional interface, reproducible experiments, genuine inference, and transparent limitations—not merely a visual prototype.
