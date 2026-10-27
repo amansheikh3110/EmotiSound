@@ -20,16 +20,16 @@
 
 EmotiSound classifies vocal acoustic features across the **eight canonical RAVDESS categories**:
 
-| Code | Emotion | Description | Acoustic Characteristics |
-|:---:|:---:|:---|:---|
-| `01` | **Neutral** | Neutral vocal expression | Balanced fundamental frequency (F0), moderate tempo, low jitter |
-| `02` | **Calm** | Relaxed, soothing cadence | Reduced intensity, prolonged vowel durations, soft harmonic decay |
-| `03` | **Happy** | Elevated, joyful pitch | High pitch excursions, increased spectral energy in high frequencies |
-| `04` | **Sad** | Somber, subdued tone | Depressed F0 contour, reduced energy, extended inter-word pauses |
-| `05` | **Angry** | Intense, forceful articulation | High acoustic power, sharp spectral flux, rapid attack times |
-| `06` | **Fearful** | Tremulous, anxious voicing | Elevated pitch variance, shimmer, irregular amplitude modulations |
-| `07` | **Disgust** | Averse, guttural resonance | Low F0, concentrated low-frequency formant energy, harsh timbral texture |
-| `08` | **Surprised** | Sudden, startled exclamation | Abrupt upward pitch glides, wide dynamic range, brief duration |
+|  Code  |       Emotion       | Description                    | Acoustic Characteristics                                                 |
+| :----: | :-----------------: | :----------------------------- | :----------------------------------------------------------------------- |
+| `01` |  **Neutral**  | Neutral vocal expression       | Balanced fundamental frequency (F0), moderate tempo, low jitter          |
+| `02` |   **Calm**   | Relaxed, soothing cadence      | Reduced intensity, prolonged vowel durations, soft harmonic decay        |
+| `03` |   **Happy**   | Elevated, joyful pitch         | High pitch excursions, increased spectral energy in high frequencies     |
+| `04` |    **Sad**    | Somber, subdued tone           | Depressed F0 contour, reduced energy, extended inter-word pauses         |
+| `05` |   **Angry**   | Intense, forceful articulation | High acoustic power, sharp spectral flux, rapid attack times             |
+| `06` |  **Fearful**  | Tremulous, anxious voicing     | Elevated pitch variance, shimmer, irregular amplitude modulations        |
+| `07` |  **Disgust**  | Averse, guttural resonance     | Low F0, concentrated low-frequency formant energy, harsh timbral texture |
+| `08` | **Surprised** | Sudden, startled exclamation   | Abrupt upward pitch glides, wide dynamic range, brief duration           |
 
 ---
 
@@ -37,7 +37,7 @@ EmotiSound classifies vocal acoustic features across the **eight canonical RAVDE
 
 ```
                                     EMOTISOUND ARCHITECTURE
-                                    
+                                
   +-----------------------------------------------------------------------------------------+
   |                                   Layer C: React Frontend                               |
   |  [ Audio Uploader ]  -->  [ Canvas Waveform ]  -->  [ Recharts Probability Bar Chart ]   |
@@ -79,6 +79,7 @@ EmotiSound classifies vocal acoustic features across the **eight canonical RAVDE
 ## 4. Technology Stack
 
 ### Machine Learning & Acoustics
+
 - **PyTorch 2.10.0**: Neural network architecture, backpropagation, and state-dict checkpoints.
 - **Librosa 1.0.0**: Mel filterbank generation, log-power decibel conversion, audio resampling.
 - **SoundFile 0.14.0**: Multi-format audio stream decoding and encoding.
@@ -86,12 +87,14 @@ EmotiSound classifies vocal acoustic features across the **eight canonical RAVDE
 - **Matplotlib 3.10.6**: Production visualization of confusion matrices and loss/accuracy curves.
 
 ### Backend & Persistence
+
 - **Flask 3.1.3**: REST API with blueprint routing and global JSON exception formatting.
 - **Flask-CORS 6.0.5**: Origin security configuration for local development.
 - **SQLite 3**: Local, lightweight storage for analysis sessions and probability vectors.
 - **Pytest 9.0.2**: Automated unit and integration testing suite.
 
 ### Frontend
+
 - **React 18.3**: Component composition, hooks, and reactive UI states.
 - **Vite 5.4**: Fast ES-module development and production bundling.
 - **TypeScript 5.6**: Type-safe contracts across API payloads and acoustic models.
@@ -104,17 +107,21 @@ EmotiSound classifies vocal acoustic features across the **eight canonical RAVDE
 ## 5. Dataset & Speaker-Independent Partitioning
 
 The model is trained on the **Ryerson Audio-Visual Database of Emotional Speech and Song (RAVDESS)**:
+
 - **Speech Subset**: 1,440 audio files from 24 professional actors (12 male, 12 female).
 - **Song Subset**: 1,012 audio files from 23 professional actors (12 male, 11 female).
 
 ### Preventing Speaker Leakage
+
 In Speech Emotion Recognition, randomly shuffling utterances across train and test sets leads to **speaker memorization** rather than true acoustic emotion recognition. EmotiSound strictly partitions by actor ID:
 
 - **Training Actors (16 actors, 960 samples, ~67%)**: `01, 02, 03, 04, 07, 08, 09, 10, 13, 14, 18, 19, 21, 22, 23, 24`
 - **Validation Actors (4 actors, 240 samples, ~17%)**: `05, 06, 17, 20`
 - **Test Actors (4 actors, 240 samples, ~17%)**: `11, 12, 15, 16`
 
-$$\text{Train} \cap \text{Val} = \emptyset, \quad \text{Train} \cap \text{Test} = \emptyset, \quad \text{Val} \cap \text{Test} = \emptyset$$
+$$
+\text{Train} \cap \text{Val} = \emptyset, \quad \text{Train} \cap \text{Test} = \emptyset, \quad \text{Val} \cap \text{Test} = \emptyset
+$$
 
 Gender is balanced 50% male and 50% female across all three subsets.
 
@@ -125,6 +132,7 @@ Gender is balanced 50% male and 50% female across all three subsets.
 Follow these step-by-step instructions to set up and run EmotiSound on any new computer:
 
 ### Prerequisites
+
 - **Python**: Version 3.10+ (tested up to 3.13)
 - **Node.js**: Version 18+ and npm (tested on Node v20/v22)
 - **Git**: Installed and configured
@@ -135,15 +143,18 @@ Follow these step-by-step instructions to set up and run EmotiSound on any new c
 ---
 
 ### Step 1: Clone the Repository
+
 ```powershell
 git clone https://github.com/amansheikh3110/EmotiSound.git
 cd EmotiSound
 ```
 
 ### Step 2: Set Up Python Backend Environment
+
 Open a terminal in the project root:
 
 **On Windows (PowerShell):**
+
 ```powershell
 # Create virtual environment
 python -m venv .venv
@@ -159,6 +170,7 @@ pip install -r requirements.txt
 ```
 
 **On macOS / Linux:**
+
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
@@ -166,6 +178,7 @@ pip install -r requirements.txt
 ```
 
 ### Step 3: Install Frontend Dependencies
+
 ```powershell
 cd frontend
 npm install
@@ -179,17 +192,21 @@ cd ..
 Open **two terminal windows**:
 
 **Terminal 1 — Backend Flask REST API:**
+
 ```powershell
 # Ensure .venv is activated
 python backend/app.py
 ```
+
 *API server will start on `http://127.0.0.1:5000`.*
 
 **Terminal 2 — React Engineering Console:**
+
 ```powershell
 cd frontend
 npm run dev
 ```
+
 *Vite dev server will start on `http://127.0.0.1:5173`.*
 
 Open your browser to:
@@ -202,11 +219,13 @@ Click any canonical emotion preset (`[01: NEU]` through `[08: SUR]`) or upload y
 ## 6. Development Tools & Diagnostics
 
 ### Verify Environment & Hardware Acceleration
+
 ```powershell
 python scripts/check_environment.py
 ```
 
 ### Verify Audio Pipeline Integrity
+
 ```powershell
 python scripts/verify_installation.py
 ```
@@ -216,23 +235,29 @@ python scripts/verify_installation.py
 ## 7. Model Training & Evaluation
 
 ### Inspect the Dataset
+
 ```powershell
 python scripts/download_or_prepare_data.py --inspect
 ```
 
 ### Train the CNN Model
+
 ```powershell
 python scripts/train_model.py --epochs 25 --batch-size 32 --lr 0.001
 ```
+
 *Trained checkpoint is automatically saved to `ml/artifacts/checkpoints/best_model.pt`.*
 
 ### Evaluate on the Held-Out Test Set
+
 ```powershell
 python scripts/evaluate_model.py
 ```
+
 *Generates `confusion_matrix.png`, `training_curves.png`, and `evaluation_summary.json`.*
 
 ### Run Automated PyTest Suite
+
 ```powershell
 python -m pytest ml/tests backend/tests -v
 ```
@@ -242,6 +267,7 @@ python -m pytest ml/tests backend/tests -v
 ## 8. Running the Application
 
 ### Option A: Simultaneous Development Launcher
+
 ```powershell
 python scripts/run_development.py
 ```
@@ -249,12 +275,14 @@ python scripts/run_development.py
 ### Option B: Individual Service Launch
 
 **Terminal 1 — Flask REST API:**
+
 ```powershell
 python backend/app.py
 # Server running at http://127.0.0.1:5000
 ```
 
 **Terminal 2 — React Frontend:**
+
 ```powershell
 cd frontend
 npm run dev
@@ -265,18 +293,18 @@ npm run dev
 
 ## 9. REST API Documentation (`/api/v1`)
 
-| Method | Endpoint | Description |
-|:---|:---|:---|
-| `GET` | `/api/v1/health` | Application status, service name, and version |
-| `GET` | `/api/v1/ready` | Model readiness state for inference |
-| `POST` | `/api/v1/analyze` | Accepts multipart audio upload (`file` or `audio`), returns prediction & probabilities |
-| `GET` | `/api/v1/model` | Model parameters, input spectrogram dimensions, and architecture metadata |
-| `GET` | `/api/v1/evaluation` | Held-out test set accuracy, F1-scores, and confusion matrix data |
-| `GET` | `/api/v1/evaluation/plots/:name` | Serves `confusion_matrix.png` or `training_curves.png` |
-| `GET` | `/api/v1/history` | Paginated SQLite history (`?limit=20&offset=0&emotion=happy`) |
-| `GET` | `/api/v1/history/:id` | Detailed record for a single analysis |
-| `DELETE` | `/api/v1/history/:id` | Deletes an analysis record from SQLite |
-| `GET` | `/api/v1/history/stats` | Aggregated count and emotion distribution |
+| Method     | Endpoint                           | Description                                                                                |
+| :--------- | :--------------------------------- | :----------------------------------------------------------------------------------------- |
+| `GET`    | `/api/v1/health`                 | Application status, service name, and version                                              |
+| `GET`    | `/api/v1/ready`                  | Model readiness state for inference                                                        |
+| `POST`   | `/api/v1/analyze`                | Accepts multipart audio upload (`file` or `audio`), returns prediction & probabilities |
+| `GET`    | `/api/v1/model`                  | Model parameters, input spectrogram dimensions, and architecture metadata                  |
+| `GET`    | `/api/v1/evaluation`             | Held-out test set accuracy, F1-scores, and confusion matrix data                           |
+| `GET`    | `/api/v1/evaluation/plots/:name` | Serves `confusion_matrix.png` or `training_curves.png`                                 |
+| `GET`    | `/api/v1/history`                | Paginated SQLite history (`?limit=20&offset=0&emotion=happy`)                            |
+| `GET`    | `/api/v1/history/:id`            | Detailed record for a single analysis                                                      |
+| `DELETE` | `/api/v1/history/:id`            | Deletes an analysis record from SQLite                                                     |
+| `GET`    | `/api/v1/history/stats`          | Aggregated count and emotion distribution                                                  |
 
 ---
 

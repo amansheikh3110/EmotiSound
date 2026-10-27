@@ -5,7 +5,7 @@ Guarantees pairwise disjoint actor sets across train, validation, and test split
 """
 
 from pathlib import Path
-from typing import Dict, List, Set, Any
+from typing import Dict, List, Set, Any, Union
 import json
 import random
 import glob
@@ -45,19 +45,27 @@ def parse_ravdess_filename(filename: str) -> Dict[str, Any]:
     }
 
 
-def find_dataset_files(data_dir: Path) -> List[Path]:
-    """Finds all .wav files in given directory recursively."""
-    patterns = ["*.wav", "**/*.wav"]
+def find_dataset_files(data_dirs: Union[Path, List[Path]]) -> List[Path]:
+    """Finds all .wav files in given directory or list of directories recursively."""
+    if isinstance(data_dirs, (str, Path)):
+        dirs = [Path(data_dirs)]
+    else:
+        dirs = [Path(d) for d in data_dirs]
+
     files: List[Path] = []
-    for pat in patterns:
-        for f in data_dir.glob(pat):
-            if f.is_file():
-                files.append(f)
+    patterns = ["*.wav", "**/*.wav"]
+    for d in dirs:
+        if not d.exists():
+            continue
+        for pat in patterns:
+            for f in d.glob(pat):
+                if f.is_file():
+                    files.append(f)
     return sorted(list(set(files)))
 
 
 def create_speaker_independent_splits(
-    audio_dir: Path,
+    audio_dir: Union[Path, List[Path]],
     output_manifest_path: Path = None,
     seed: int = RANDOM_SEED,
 ) -> Dict[str, Any]:
@@ -157,14 +165,22 @@ def create_speaker_independent_splits(
 
 if __name__ == "__main__":
     import sys
-    target_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT_DIR / "Audio_Speech_Actors_01-24"
-    if not target_dir.exists():
-        target_dir = ROOT_DIR / "Audio_Song_Actors_01-24"
+    if len(sys.argv) > 1:
+        target_dirs = [Path(sys.argv[1])]
+    else:
+        target_dirs = []
+        speech_dir = ROOT_DIR / "Audio_Speech_Actors_01-24"
+        song_dir = ROOT_DIR / "Audio_Song_Actors_01-24"
+        if speech_dir.exists():
+            target_dirs.append(speech_dir)
+        if song_dir.exists():
+            target_dirs.append(song_dir)
 
-    print(f"Creating speaker-independent split for: {target_dir}")
-    res = create_speaker_independent_splits(target_dir)
+    print(f"Creating speaker-independent split for: {[str(d.name) for d in target_dirs]}")
+    res = create_speaker_independent_splits(target_dirs)
     meta = res["metadata"]
     print("Split completed successfully!")
+    print(f"Total files discovered: {meta['total_files_discovered']}")
     print(f"Train Actors ({len(meta['train_actors'])}): {meta['train_actors']} -> {meta['train_sample_count']} samples")
     print(f"Val Actors   ({len(meta['val_actors'])}): {meta['val_actors']} -> {meta['val_sample_count']} samples")
     print(f"Test Actors  ({len(meta['test_actors'])}): {meta['test_actors']} -> {meta['test_sample_count']} samples")

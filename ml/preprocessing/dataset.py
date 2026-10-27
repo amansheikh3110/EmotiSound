@@ -47,15 +47,20 @@ class SpeechEmotionDataset(Dataset):
         self.feature_extractor = FeatureExtractor()
 
         # Cache pre-conditioned waveforms for rapid epoch iterations on CPU
+        # Cache pre-conditioned waveforms for rapid epoch iterations on CPU
         self._cache: Dict[int, Tuple[np.ndarray, int, Dict[str, Any]]] = {}
+        self._tensor_cache: Dict[int, torch.Tensor] = {}
 
         if self.cache_in_memory:
             self._preload_cache()
 
     def _preload_cache(self) -> None:
-        """Preloads waveforms into RAM for high-throughput training."""
+        """Preloads waveforms (and tensors for eval) into RAM for high-throughput training."""
         for idx in range(len(self.samples)):
-            self._get_waveform_and_meta(idx)
+            y, label_idx, _ = self._get_waveform_and_meta(idx)
+            if not self.is_training:
+                tensor, _ = self.feature_extractor.to_model_tensor(y)
+                self._tensor_cache[idx] = tensor.squeeze(0)
 
     def _get_waveform_and_meta(self, idx: int):
         if idx in self._cache:
@@ -76,7 +81,19 @@ class SpeechEmotionDataset(Dataset):
         return len(self.samples)
 
     def __getitem__(self, idx: int):
+        # Fast path for validation / test (returns precomputed tensor)
+        if not self.is_training and idx in self._tensor_cache:
+            _, label_idx, _ = self._get_waveform_and_meta(idx)
+            return self._tensor_cache[idx], torch.tensor(label_idx, dtype=torch.long)
+
         y, label_idx, meta = self._get_waveform_and_meta(idx)
+
+        if not self.is_training:
+            tensor, _ = self.feature_extractor.to_model_tensor(y)
+            tensor = tensor.squeeze(0)
+            if self.cache_in_memory:
+                self._tensor_cache[idx] = tensor
+            return tensor, torch.tensor(label_idx, dtype=torch.long)
 
         # Apply waveform-level data augmentation during training only
         if self.is_training and self.augmentor:

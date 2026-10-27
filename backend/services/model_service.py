@@ -31,13 +31,34 @@ class ModelService:
 
     def _init_service(self):
         self.predictor = EmotionPredictor()
+        self._last_ckpt_mtime = None
+        self._check_reload()
+
+    def _check_reload(self):
+        """Automatically reloads weights if checkpoint file on disk has been updated."""
+        ckpt_path = self.predictor.checkpoint_path
+        if ckpt_path.exists():
+            try:
+                mtime = ckpt_path.stat().st_mtime
+                if self._last_ckpt_mtime is None or mtime > self._last_ckpt_mtime:
+                    self._last_ckpt_mtime = mtime
+                    self.predictor._load_model_if_available()
+            except Exception as e:
+                print(f"[Warning] Failed to check checkpoint reload: {e}")
+
+    def reload_model(self):
+        """Forces reload of model checkpoint from disk."""
+        self._last_ckpt_mtime = None
+        return self.predictor._load_model_if_available()
 
     def is_ready(self) -> bool:
         """Checks if a trained model is ready for inference."""
+        self._check_reload()
         return self.predictor.is_ready()
 
     def get_model_info(self) -> Dict[str, Any]:
         """Returns comprehensive model metadata adhering to Section 13 specification."""
+        self._check_reload()
         ready = self.is_ready()
         ckpt_meta = self.predictor.checkpoint_meta or {}
 
@@ -62,6 +83,7 @@ class ModelService:
 
     def predict(self, audio_bytes: bytes, filename: str) -> Dict[str, Any]:
         """Runs inference via predictor."""
+        self._check_reload()
         return self.predictor.predict(audio_bytes, filename=filename)
 
 
