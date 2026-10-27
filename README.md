@@ -37,7 +37,7 @@ EmotiSound classifies vocal acoustic features across the **eight canonical RAVDE
 
 ```
                                     EMOTISOUND ARCHITECTURE
-                                
+                              
   +-----------------------------------------------------------------------------------------+
   |                                   Layer C: React Frontend                               |
   |  [ Audio Uploader ]  -->  [ Canvas Waveform ]  -->  [ Recharts Probability Bar Chart ]   |
