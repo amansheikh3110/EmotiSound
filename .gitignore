@@ -18,8 +18,8 @@ frontend/.vite/
 
 # Datasets & Large Audio Data
 Audio_Song_Actors_01-24/
-Audio_Speech_Actors_01-24/*
-!Audio_Speech_Actors_01-24/Actor_01/
+Audio_Speech_Actors_01-24/
+master-prompt
 ml/data/raw/*
 !ml/data/raw/README.md
 ml/data/processed/*
